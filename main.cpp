@@ -1,5 +1,6 @@
 #include <iostream>
 #include <math.h>
+#include <vector>
 struct vec3{
     float x;
     float y;
@@ -39,6 +40,20 @@ int lineSideCheck(vec3 v1, vec3 v2, vec3 v) {
      
 }
 
+bool convexHullCheck(std::vector<vec3> points){
+    for(int i = 0; i < points.size(); i++){
+            int cur = i;
+            int next = i < points.size()-1? i+1:0;
+        for(int j = 0; j < points.size(); j++){
+            if(j == cur || j == next) continue;
+            
+            int side = lineSideCheck( points[cur], points[next], points[j] );
+            if(side < 0) return false;
+        }
+    }
+    return true;
+}
+
 void testProjectPointOnLine(){
     vec3 p = {15 , 3 , 0};
     vec3 q = {10 , 10 , 0};
@@ -62,11 +77,26 @@ void testLineSideCheck(){
     std::cout<<"testLineSideCheck " << lineSideCheck(v1,v2,v0) << " " << lineSideCheck(v1,v2,vp) << " " << lineSideCheck(v1,v2,vn)<< std::endl ;
 }
 
+void testConvexHull(){
+    vec3 v1 = {0,0,0};
+    vec3 v2 = {100,0,0};
+    vec3 v3 = {100,100,0};
+    vec3 v4 = {0,100,0};
+    std::cout << "testConvexHull " << (convexHullCheck({v1,v2,v3,v4}) ? "true" : "false") << std::endl;
 
+    vec3 v1n = {0,0,0};
+    vec3 v2n = {100,0,0};
+    vec3 v3n = {30,30,0};
+    vec3 v4n = {0,100,0};
+    std::cout << "testConvexHull " << (convexHullCheck({v1n,v2n,v3n,v4n}) ? "true" : "false") << std::endl;
+}
+
+//gcc main.cpp -lstdc++ -lm -o main
 int main(){
     std::cout<<"Hello geo\n";
     testProjectPointOnLine();
     testCross();
     testLineSideCheck();
+    testConvexHull();
     return 0;
 }
